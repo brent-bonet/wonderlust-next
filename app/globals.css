@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+/* Token custom properties, verbatim from reference/index.html */
+:root {
+  --ink: #243029;
+  --paper: #f6f8f6;
+  --toner: #14c4cb;
+  --toner-deep: #0c8289;
+  --fog: #cfe0dd;
+  --tan: #a9783f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--toner);
+  outline-offset: 3px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s ease both;
+}
+
+@keyframes blink {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+  }
+  35% {
+    opacity: 1;
+  }
+}
+
+/* Book band scissor-loop overlay, verbatim from reference .book-band::before */
+.book-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='3'%3E%3Cellipse cx='60' cy='0' rx='38' ry='58'/%3E%3Cellipse cx='60' cy='120' rx='38' ry='58'/%3E%3Cellipse cx='0' cy='60' rx='38' ry='58'/%3E%3Cellipse cx='120' cy='60' rx='38' ry='58'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
