@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminUser, getSupabaseServerAuth } from "@/lib/supabase/server-auth";
-import { signOut } from "./actions";
+import { resetDemoContent, signOut } from "./actions";
 
 export const metadata: Metadata = {
   title: "Admin — Wonderlust Salon",
@@ -60,6 +60,27 @@ export default async function AdminLayout({
             >
               View site →
             </Link>
+            {!demo && (
+              <details className="relative">
+                <summary className="cursor-pointer list-none font-mono text-[.8rem] text-tan hover:underline [&::-webkit-details-marker]:hidden">
+                  Reset demo
+                </summary>
+                <div className="absolute right-0 z-10 mt-2 w-72 rounded-[10px] border border-fog bg-white p-4">
+                  <p className="text-[.85rem]">
+                    Clears every booking and restores the original services,
+                    team, hours, and availability. Admin accounts are kept.
+                  </p>
+                  <form action={resetDemoContent} className="mt-3">
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-full border border-tan bg-transparent px-3 py-[7px] font-mono text-[.8rem] text-tan transition-colors duration-200 hover:bg-tan hover:text-paper"
+                    >
+                      Yes, reset everything
+                    </button>
+                  </form>
+                </div>
+              </details>
+            )}
             {!demo && (
               <form action={signOut}>
                 <button
