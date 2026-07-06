@@ -36,7 +36,12 @@ export default async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
-  if (!user && !isLoginPage) {
+  // Invite/recovery links land on "/" with the session in a URL hash (never
+  // sent to the server), then AuthHashHandler exchanges it client-side and
+  // navigates here. Exempt so that in-flight navigation isn't redirected to
+  // login before the new session cookie has round-tripped.
+  const isSetPasswordPage = request.nextUrl.pathname === "/admin/set-password";
+  if (!user && !isLoginPage && !isSetPasswordPage) {
     const loginUrl = new URL("/admin/login", request.url);
     return NextResponse.redirect(loginUrl);
   }

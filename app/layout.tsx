@@ -6,6 +6,7 @@ import {
   Spline_Sans_Mono,
 } from "next/font/google";
 import "./globals.css";
+import AuthHashHandler from "@/components/admin/AuthHashHandler";
 
 /* Exact font families from the reference file — do not substitute. */
 const display = Instrument_Serif({
@@ -114,6 +115,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
         />
+        <AuthHashHandler />
         {children}
       </body>
     </html>
