@@ -37,7 +37,7 @@ export async function sendBookingConfirmationEmail(details: BookingEmailDetails)
       ? `<p>A $${details.amountPaid} deposit was charged to hold your spot — the remainder is due at your appointment.</p>`
       : details.paymentType === "full"
         ? `<p>$${details.amountPaid} was charged in full.</p>`
-        : "";
+        : `<p>Nothing was charged — payment is handled at the salon.</p>`;
 
   await resend.emails.send({
     from: BOOKING_FROM_EMAIL,

@@ -5,6 +5,7 @@ import {
   toMinutes,
 } from "@/lib/booking";
 import { getAvailableSlots } from "@/lib/booking-server";
+import { sendBookingConfirmationEmail } from "@/lib/email";
 import { getStripe, toCents } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
@@ -121,8 +122,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Free / consult bookings skip payment entirely.
+  // Free / consult bookings skip payment entirely — no webhook will fire,
+  // so the confirmation email has to go out here.
   if (due.amount === 0) {
+    const { data: stylist } = await supabase
+      .from("stylists")
+      .select("name")
+      .eq("id", stylistId)
+      .maybeSingle();
+    try {
+      await sendBookingConfirmationEmail({
+        clientName: name,
+        clientEmail: email,
+        serviceName: service.name,
+        stylistName: stylist?.name ?? "your stylist",
+        appointmentDate: date,
+        appointmentTime: time,
+        amountPaid: 0,
+        paymentType: "none",
+      });
+    } catch {
+      // The booking stands even if the email fails.
+    }
     return NextResponse.json({ bookingId: booking.id, free: true });
   }
 
