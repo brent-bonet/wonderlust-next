@@ -16,11 +16,13 @@ export function AdminPage({
   label,
   title,
   error,
+  notice,
   children,
 }: {
   label: string;
   title: string;
   error?: string;
+  notice?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -34,6 +36,11 @@ export function AdminPage({
       {error && (
         <p role="alert" className="mt-4 font-mono text-[.85rem] text-tan">
           {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" className="mt-4 font-mono text-[.85rem] text-toner-deep">
+          {notice}
         </p>
       )}
       <div className="mt-10">{children}</div>

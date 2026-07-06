@@ -35,5 +35,9 @@ export async function resetDemoContent() {
 
   // Content changed everywhere — invalidate the whole tree.
   revalidatePath("/", "layout");
-  backTo("/admin/bookings");
+  redirect(
+    `/admin/bookings?notice=${encodeURIComponent(
+      "Demo content restored — bookings cleared, original services, team, and hours back in place.",
+    )}`,
+  );
 }

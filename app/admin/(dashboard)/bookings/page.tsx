@@ -72,16 +72,16 @@ async function loadBookings(
 export default async function AdminBookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string; error?: string }>;
+  searchParams: Promise<{ filter?: string; error?: string; notice?: string }>;
 }) {
-  const { filter: rawFilter, error } = await searchParams;
+  const { filter: rawFilter, error, notice } = await searchParams;
   const filter: Filter = FILTERS.includes(rawFilter as Filter)
     ? (rawFilter as Filter)
     : "upcoming";
   const { rows, demo } = await loadBookings(filter);
 
   return (
-    <AdminPage label="Calendar" title="Bookings" error={error}>
+    <AdminPage label="Calendar" title="Bookings" error={error} notice={notice}>
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <Link
