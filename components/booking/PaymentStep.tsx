@@ -9,6 +9,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import Btn from "@/components/Btn";
+import { useBusyCursor } from "@/components/useBusyCursor";
 import { toSlotLabel, toMinutes } from "@/lib/booking";
 
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
@@ -69,6 +70,7 @@ function CheckoutForm({ bookingId }: { bookingId: string }) {
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useBusyCursor(submitting);
 
   async function pay() {
     if (!stripe || !elements) return;

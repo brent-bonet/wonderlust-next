@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { useBusyCursor } from "./useBusyCursor";
+import { useBusyCursor } from "@/components/useBusyCursor";
 
 /**
  * Two-step guard for destructive admin actions: the trigger swaps to a

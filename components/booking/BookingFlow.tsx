@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Btn from "@/components/Btn";
+import { useBusyCursor } from "@/components/useBusyCursor";
 import { amountDueNow } from "@/lib/booking";
 import type { BookableService, Slot, StylistCard } from "@/lib/types";
 import PaymentStep from "./PaymentStep";
@@ -44,6 +45,7 @@ export default function BookingFlow({
   const [payment, setPayment] = useState<PaymentInfo | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useBusyCursor(slotsLoading || submitting);
 
   const groups = useMemo(() => {
     const map = new Map<string, BookableService[]>();

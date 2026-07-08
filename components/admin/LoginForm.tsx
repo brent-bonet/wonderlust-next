@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Btn from "@/components/Btn";
+import { useBusyCursor } from "@/components/useBusyCursor";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const inputClasses =
@@ -23,6 +24,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useBusyCursor(submitting);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();

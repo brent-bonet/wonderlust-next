@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { useBusyCursor } from "./useBusyCursor";
+import { useBusyCursor } from "@/components/useBusyCursor";
 
 /*
  * Submit button that shows the form's in-flight state: busy cursor,

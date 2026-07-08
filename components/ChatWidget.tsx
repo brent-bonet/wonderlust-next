@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useBusyCursor } from "@/components/useBusyCursor";
 
 type Message = { kind: "bot" | "user"; text: string; error?: boolean };
 
@@ -55,6 +56,7 @@ export default function ChatWidget() {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  useBusyCursor(typing);
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

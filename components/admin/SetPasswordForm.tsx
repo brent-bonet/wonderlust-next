@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Btn from "@/components/Btn";
+import { useBusyCursor } from "@/components/useBusyCursor";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const inputClasses =
@@ -19,6 +20,7 @@ export default function SetPasswordForm() {
   const [confirm, setConfirm] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useBusyCursor(submitting);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
