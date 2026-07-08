@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CancelBookingControl from "@/components/admin/CancelBookingControl";
 import { AdminPage, inputClasses, labelClasses } from "@/components/admin/ui";
 import { getSupabaseServerAuth } from "@/lib/supabase/server-auth";
 import { cancelBooking, rescheduleBooking } from "./actions";
@@ -178,30 +179,13 @@ export default async function AdminBookingsPage({
                       Reschedule
                     </button>
                   </form>
-                  {/* Two-step cancel: the summary only reveals the confirm;
-                      closing the disclosure is the "never mind" path. */}
-                  <details className="pb-[7px]">
-                    <summary className="cursor-pointer list-none font-mono text-[.8rem] text-tan hover:underline [&::-webkit-details-marker]:hidden">
-                      Cancel booking
-                    </summary>
-                    <form
-                      action={cancelBooking}
-                      className="mt-2 flex items-center gap-3"
-                    >
-                      <input type="hidden" name="id" value={b.id} />
-                      <input type="hidden" name="filter" value={filter} />
-                      <span className="font-mono text-[.8rem] text-ink">
-                        Cancel {b.client_name}&rsquo;s{" "}
-                        {b.appointment_date} appointment?
-                      </span>
-                      <button
-                        type="submit"
-                        className="cursor-pointer rounded-full border border-tan bg-transparent px-3 py-[5px] font-mono text-[.8rem] text-tan transition-colors duration-200 hover:bg-tan hover:text-paper"
-                      >
-                        Yes, cancel it
-                      </button>
-                    </form>
-                  </details>
+                  <CancelBookingControl
+                    action={cancelBooking}
+                    bookingId={b.id}
+                    filter={filter}
+                    clientName={b.client_name}
+                    appointmentDate={b.appointment_date}
+                  />
                 </div>
               )}
             </li>
