@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Btn from "@/components/Btn";
+import ConfirmAction from "@/components/admin/ConfirmAction";
 import { AdminPage, inputClasses, labelClasses } from "@/components/admin/ui";
 import { FALLBACK_STYLISTS } from "@/lib/fallback-data";
 import { getSupabaseServerAuth } from "@/lib/supabase/server-auth";
@@ -153,30 +154,25 @@ export default async function AdminAvailabilityPage({
                     ) : (
                       <span className="flex flex-wrap gap-x-4 gap-y-1">
                         {dayWindows.map((w) => (
-                          <form
+                          <span
                             key={w.id}
-                            action={deleteAvailabilityWindow}
-                            className="inline-flex items-baseline gap-2"
+                            className="inline-flex flex-wrap items-baseline gap-2"
                           >
-                            <input type="hidden" name="id" value={w.id} />
-                            <input
-                              type="hidden"
-                              name="stylist_id"
-                              value={stylist.id}
-                            />
                             <span className="font-mono text-[.9rem] text-toner-deep">
                               {timeLabel(w.start_time)} – {timeLabel(w.end_time)}
                             </span>
                             {!demo && (
-                              <button
-                                type="submit"
-                                aria-label={`Remove ${day} ${timeLabel(w.start_time)} window`}
-                                className="cursor-pointer bg-transparent font-mono text-[.8rem] text-tan hover:underline"
-                              >
-                                ✕
-                              </button>
+                              <ConfirmAction
+                                action={deleteAvailabilityWindow}
+                                fields={{ id: w.id, stylist_id: stylist.id }}
+                                trigger="✕"
+                                triggerAriaLabel={`Remove ${day} ${timeLabel(w.start_time)} window`}
+                                triggerClassName="cursor-pointer bg-transparent font-mono text-[.8rem] text-tan hover:underline"
+                                prompt={`Remove ${day} ${timeLabel(w.start_time)} – ${timeLabel(w.end_time)}?`}
+                                confirmLabel="Yes, remove"
+                              />
                             )}
-                          </form>
+                          </span>
                         ))}
                       </span>
                     )}
@@ -247,16 +243,14 @@ export default async function AdminAvailabilityPage({
                       {b.reason ?? ""}
                     </span>
                     <span className="flex-1" />
-                    <form action={deleteBlockedDate}>
-                      <input type="hidden" name="id" value={b.id} />
-                      <input type="hidden" name="stylist_id" value={stylist.id} />
-                      <button
-                        type="submit"
-                        className="cursor-pointer bg-transparent font-mono text-[.8rem] text-tan hover:underline"
-                      >
-                        unblock
-                      </button>
-                    </form>
+                    <ConfirmAction
+                      action={deleteBlockedDate}
+                      fields={{ id: b.id, stylist_id: stylist.id }}
+                      trigger="unblock"
+                      triggerClassName="cursor-pointer bg-transparent font-mono text-[.8rem] text-tan hover:underline"
+                      prompt={`Unblock ${b.date}?`}
+                      confirmLabel="Yes, unblock"
+                    />
                   </li>
                 ))}
               </ul>

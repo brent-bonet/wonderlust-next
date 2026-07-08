@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CancelBookingControl from "@/components/admin/CancelBookingControl";
+import ConfirmAction from "@/components/admin/ConfirmAction";
 import { AdminPage, inputClasses, labelClasses } from "@/components/admin/ui";
 import { getSupabaseServerAuth } from "@/lib/supabase/server-auth";
 import { cancelBooking, rescheduleBooking } from "./actions";
@@ -179,12 +179,12 @@ export default async function AdminBookingsPage({
                       Reschedule
                     </button>
                   </form>
-                  <CancelBookingControl
+                  <ConfirmAction
                     action={cancelBooking}
-                    bookingId={b.id}
-                    filter={filter}
-                    clientName={b.client_name}
-                    appointmentDate={b.appointment_date}
+                    fields={{ id: b.id, filter }}
+                    trigger="Cancel booking"
+                    prompt={`Cancel ${b.client_name}’s ${b.appointment_date} appointment?`}
+                    confirmLabel="Yes, cancel it"
                   />
                 </div>
               )}

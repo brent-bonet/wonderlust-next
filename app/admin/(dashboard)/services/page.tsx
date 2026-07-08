@@ -1,4 +1,5 @@
 import Btn from "@/components/Btn";
+import ConfirmAction from "@/components/admin/ConfirmAction";
 import {
   AdminPage,
   EditDetails,
@@ -228,17 +229,16 @@ export default async function AdminServicesPage({
                   </div>
                 </fieldset>
               </form>
-              <form action={deleteService} className="mt-4">
-                <fieldset disabled={demo} className="contents">
-                  <input type="hidden" name="id" value={s.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer border-b border-fog bg-transparent font-mono text-[.8rem] text-tan hover:border-tan disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Delete service
-                  </button>
-                </fieldset>
-              </form>
+              <div className="mt-4">
+                <ConfirmAction
+                  action={deleteService}
+                  fields={{ id: s.id }}
+                  disabled={demo}
+                  trigger="Delete service"
+                  prompt={`Delete “${s.name}” from the menu?`}
+                  confirmLabel="Yes, delete it"
+                />
+              </div>
             </EditDetails>
           </li>
         ))}

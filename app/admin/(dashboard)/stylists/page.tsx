@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Btn from "@/components/Btn";
+import ConfirmAction from "@/components/admin/ConfirmAction";
 import {
   AdminPage,
   EditDetails,
@@ -181,17 +182,16 @@ export default async function AdminStylistsPage({
                   </div>
                 </fieldset>
               </form>
-              <form action={deleteStylist} className="mt-4">
-                <fieldset disabled={demo} className="contents">
-                  <input type="hidden" name="id" value={s.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer border-b border-fog bg-transparent font-mono text-[.8rem] text-tan hover:border-tan disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Delete stylist
-                  </button>
-                </fieldset>
-              </form>
+              <div className="mt-4">
+                <ConfirmAction
+                  action={deleteStylist}
+                  fields={{ id: s.id }}
+                  disabled={demo}
+                  trigger="Delete stylist"
+                  prompt={`Remove ${s.name} from the team?`}
+                  confirmLabel="Yes, remove"
+                />
+              </div>
             </EditDetails>
           </li>
         ))}
