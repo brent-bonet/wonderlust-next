@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Btn from "@/components/Btn";
 import ConfirmAction from "@/components/admin/ConfirmAction";
+import PendingBtn from "@/components/admin/PendingBtn";
 import { AdminPage, inputClasses, labelClasses } from "@/components/admin/ui";
 import { FALLBACK_STYLISTS } from "@/lib/fallback-data";
 import { getSupabaseServerAuth } from "@/lib/supabase/server-auth";
@@ -217,7 +217,7 @@ export default async function AdminAvailabilityPage({
                     className={inputClasses}
                   />
                 </div>
-                <Btn type="submit">Add window</Btn>
+                <PendingBtn>Add window</PendingBtn>
               </fieldset>
             </form>
           </section>
@@ -275,7 +275,7 @@ export default async function AdminAvailabilityPage({
                     className={inputClasses}
                   />
                 </div>
-                <Btn type="submit">Block date</Btn>
+                <PendingBtn>Block date</PendingBtn>
               </fieldset>
             </form>
           </section>

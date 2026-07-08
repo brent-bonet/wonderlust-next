@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Btn from "@/components/Btn";
 import ConfirmAction from "@/components/admin/ConfirmAction";
+import PendingBtn from "@/components/admin/PendingBtn";
 import {
   AdminPage,
   EditDetails,
@@ -129,7 +129,7 @@ export default async function AdminStylistsPage({
           <fieldset disabled={demo} className="contents">
             <StylistFields />
             <div className="mt-6">
-              <Btn type="submit">Add stylist</Btn>
+              <PendingBtn>Add stylist</PendingBtn>
             </div>
           </fieldset>
         </form>
@@ -178,7 +178,7 @@ export default async function AdminStylistsPage({
                 <fieldset disabled={demo} className="contents">
                   <StylistFields stylist={s} />
                   <div className="mt-6">
-                    <Btn type="submit">Save</Btn>
+                    <PendingBtn>Save</PendingBtn>
                   </div>
                 </fieldset>
               </form>

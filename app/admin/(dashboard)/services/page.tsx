@@ -1,5 +1,5 @@
-import Btn from "@/components/Btn";
 import ConfirmAction from "@/components/admin/ConfirmAction";
+import PendingBtn from "@/components/admin/PendingBtn";
 import {
   AdminPage,
   EditDetails,
@@ -191,7 +191,7 @@ export default async function AdminServicesPage({
           <fieldset disabled={demo} className="contents">
             <ServiceFields />
             <div className="mt-6">
-              <Btn type="submit">Add service</Btn>
+              <PendingBtn>Add service</PendingBtn>
             </div>
           </fieldset>
         </form>
@@ -225,7 +225,7 @@ export default async function AdminServicesPage({
                 <fieldset disabled={demo} className="contents">
                   <ServiceFields service={s} />
                   <div className="mt-6 flex items-center gap-5">
-                    <Btn type="submit">Save</Btn>
+                    <PendingBtn>Save</PendingBtn>
                   </div>
                 </fieldset>
               </form>

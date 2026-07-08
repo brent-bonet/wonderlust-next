@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ConfirmAction from "@/components/admin/ConfirmAction";
+import PendingBtn from "@/components/admin/PendingBtn";
 import { AdminPage, inputClasses, labelClasses } from "@/components/admin/ui";
 import { getSupabaseServerAuth } from "@/lib/supabase/server-auth";
 import { cancelBooking, rescheduleBooking } from "./actions";
@@ -172,12 +173,9 @@ export default async function AdminBookingsPage({
                         className={inputClasses}
                       />
                     </div>
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-full border border-fog bg-white px-3 py-[7px] font-mono text-[.8rem] text-toner-deep hover:border-toner-deep"
-                    >
+                    <PendingBtn className="rounded-full border border-fog bg-white px-3 py-[7px] font-mono text-[.8rem] text-toner-deep hover:border-toner-deep disabled:opacity-60">
                       Reschedule
-                    </button>
+                    </PendingBtn>
                   </form>
                   <ConfirmAction
                     action={cancelBooking}

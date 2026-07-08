@@ -1,4 +1,4 @@
-import Btn from "@/components/Btn";
+import PendingBtn from "@/components/admin/PendingBtn";
 import {
   AdminPage,
   checkboxLabelClasses,
@@ -112,7 +112,7 @@ export default async function AdminHoursPage({
                   />
                   Closed
                 </label>
-                <Btn type="submit">Save</Btn>
+                <PendingBtn>Save</PendingBtn>
               </fieldset>
             </form>
           </li>

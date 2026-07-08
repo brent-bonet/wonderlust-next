@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getAdminUser, getSupabaseServerAuth } from "@/lib/supabase/server-auth";
+import PendingBtn from "@/components/admin/PendingBtn";
 import { resetDemoContent, signOut } from "./actions";
 
 export const metadata: Metadata = {
@@ -71,12 +72,12 @@ export default async function AdminLayout({
                     team, hours, and availability. Admin accounts are kept.
                   </p>
                   <form action={resetDemoContent} className="mt-3">
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-full border border-tan bg-transparent px-3 py-[7px] font-mono text-[.8rem] text-tan transition-colors duration-200 hover:bg-tan hover:text-paper"
+                    <PendingBtn
+                      pendingLabel="Resetting…"
+                      className="rounded-full border border-tan bg-transparent px-3 py-[7px] font-mono text-[.8rem] text-tan transition-colors duration-200 hover:bg-tan hover:text-paper disabled:opacity-60"
                     >
                       Yes, reset everything
-                    </button>
+                    </PendingBtn>
                   </form>
                 </div>
               </details>
