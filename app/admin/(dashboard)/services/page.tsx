@@ -118,7 +118,7 @@ function ServiceFields({ service }: { service?: ServiceRow }) {
           step="0.01"
           min="0"
           defaultValue={service?.deposit_amount ?? ""}
-          placeholder="blank = full amount"
+          placeholder="blank = pay at salon"
           className={inputClasses}
         />
       </div>

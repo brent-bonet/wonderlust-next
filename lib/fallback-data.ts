@@ -29,10 +29,9 @@ const svc = (
   price,
   priceDisplay,
   durationMinutes,
-  // Default policy: cheap flat services are paid in full at booking; priced
-  // services take a $20 deposit under $100, $50 at $100+; consults are free.
-  depositAmount:
-    price === null || price === 0 ? null : price >= 100 ? 50 : 20,
+  // Payment policy per the owner (2026-07-08): everyone pays at the salon.
+  // Deposits / full prepayment stay available per-service via /admin.
+  depositAmount: null,
   fullPrepayment: false,
   ...overrides,
 });
@@ -60,10 +59,7 @@ export const FALLBACK_SERVICES: BookableService[] = [
   svc("svc-b3", STYLING, "Brazilian Bond Builder", 25, "$25+", 30),
   svc("svc-split-end-mender", STYLING, "Split End Mender", 25, "$25+", 30),
   svc("svc-extensions", STYLING, "Extensions", null, "consult", 30),
-  svc("svc-facial-waxing", AESTHETIC, "Facial waxing", 15, "$15", 15, {
-    depositAmount: null,
-    fullPrepayment: true,
-  }),
+  svc("svc-facial-waxing", AESTHETIC, "Facial waxing", 15, "$15", 15),
   svc("svc-consultation", AESTHETIC, "Consultation", 0, "free", 30),
   svc("svc-makeup-airbrush", AESTHETIC, "Makeup & airbrush", null, "consult", 60),
 ];

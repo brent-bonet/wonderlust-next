@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Btn from "@/components/Btn";
+import { amountDueNow } from "@/lib/booking";
 import type { BookableService, Slot, StylistCard } from "@/lib/types";
 import PaymentStep from "./PaymentStep";
 
@@ -15,7 +16,7 @@ type PaymentInfo = {
   paymentType: "deposit" | "full";
 };
 
-const STEPS = ["Service", "Stylist", "Time", "Details", "Payment"] as const;
+const BASE_STEPS = ["Service", "Stylist", "Time", "Details"] as const;
 
 const inputClasses =
   "w-full rounded-[10px] border border-fog bg-white px-4 py-2.5 font-body text-[.95rem] text-ink focus:border-transparent focus:outline-2 focus:outline-toner";
@@ -129,18 +130,23 @@ export default function BookingFlow({
     (step === 2 && !!date && !!time) ||
     (step === 3 && detailsValid);
 
+  // Most services are paid at the salon — the Payment step only exists when
+  // the selected service is configured with a deposit or full prepayment.
+  const dueNow = service ? amountDueNow(service) : null;
+  const steps: string[] =
+    dueNow && dueNow.amount > 0 ? [...BASE_STEPS, "Payment"] : [...BASE_STEPS];
+
   function continueLabel() {
     if (step < 3) return "Continue";
-    if (!service) return "Continue";
-    if (service.price === null || service.price === 0) return "Confirm booking";
-    return "Continue to payment";
+    if (dueNow && dueNow.amount > 0) return "Continue to payment";
+    return "Confirm booking";
   }
 
   return (
     <div className="max-w-[820px]">
       {/* Step indicator */}
       <ol className="mb-10 flex flex-wrap gap-x-5 gap-y-2">
-        {STEPS.map((label, i) => (
+        {steps.map((label, i) => (
           <li
             key={label}
             className={`font-mono text-[.8rem] uppercase tracking-[.18em] ${

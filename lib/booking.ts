@@ -102,7 +102,11 @@ export function filterPastSlots(date: string, slotMinutes: number[]): number[] {
   return slotMinutes.filter((t) => t >= now.minutes + MIN_LEAD_MINUTES);
 }
 
-/** What the client owes at booking time, in dollars. */
+/**
+ * What the client owes at booking time, in dollars. Per the owner, clients
+ * pay at the salon — Stripe only enters when a service is explicitly
+ * configured with a deposit or the full-prepayment flag in /admin.
+ */
 export function amountDueNow(service: {
   price: number | null;
   depositAmount: number | null;
@@ -111,8 +115,11 @@ export function amountDueNow(service: {
   if (service.price === null || service.price === 0) {
     return { amount: 0, type: "none" };
   }
-  if (!service.fullPrepayment && service.depositAmount && service.depositAmount > 0) {
+  if (service.fullPrepayment) {
+    return { amount: service.price, type: "full" };
+  }
+  if (service.depositAmount && service.depositAmount > 0) {
     return { amount: service.depositAmount, type: "deposit" };
   }
-  return { amount: service.price, type: "full" };
+  return { amount: 0, type: "none" };
 }
