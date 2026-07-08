@@ -131,15 +131,19 @@ export default async function AdminBookingsPage({
                 <span className="uppercase tracking-[.1em] text-toner-deep">
                   {b.status}
                 </span>
-                <span>
-                  {PAYMENT_LABEL[b.payment_status] ?? b.payment_status}
-                  {b.deposit_paid > 0 && b.payment_status === "deposit_paid"
-                    ? ` — $${b.deposit_paid} paid`
-                    : ""}
-                  {b.total_paid > 0 && b.payment_status === "paid"
-                    ? ` — $${b.total_paid}`
-                    : ""}
-                </span>
+                {/* "unpaid" is the norm (pay at salon) — only surface the
+                    exceptions where money already moved. */}
+                {b.payment_status !== "unpaid" && (
+                  <span>
+                    {PAYMENT_LABEL[b.payment_status] ?? b.payment_status}
+                    {b.deposit_paid > 0 && b.payment_status === "deposit_paid"
+                      ? ` — $${b.deposit_paid} paid`
+                      : ""}
+                    {b.total_paid > 0 && b.payment_status === "paid"
+                      ? ` — $${b.total_paid}`
+                      : ""}
+                  </span>
+                )}
               </div>
 
               {b.status !== "cancelled" && b.status !== "completed" && (
