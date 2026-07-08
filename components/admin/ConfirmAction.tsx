@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useBusyCursor } from "./useBusyCursor";
 
 /**
  * Two-step guard for destructive admin actions: the trigger swaps to a
@@ -26,6 +27,7 @@ function ConfirmControls({
   onKeep: () => void;
 }) {
   const { pending } = useFormStatus();
+  useBusyCursor(pending);
   return (
     <span
       className={`flex flex-wrap items-center gap-3 ${pending ? "cursor-wait" : ""}`}

@@ -15,6 +15,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Whole-page wait cursor while a server action is in flight
+   (toggled by components/admin/useBusyCursor.ts). */
+.busy-cursor,
+.busy-cursor * {
+  cursor: wait !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

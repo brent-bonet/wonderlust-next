@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import { useBusyCursor } from "./useBusyCursor";
 
 /*
  * Submit button that shows the form's in-flight state: busy cursor,
@@ -22,6 +23,7 @@ export default function PendingBtn({
   className?: string;
 }) {
   const { pending } = useFormStatus();
+  useBusyCursor(pending);
   return (
     <button
       type="submit"
