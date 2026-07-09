@@ -13,14 +13,15 @@ const WEBHOOK_SECRET = "whsec_test_wonderlust";
 
 /** Records every update chain so tests can assert on table, values, filters. */
 type UpdateCall = { table: string; values: unknown; eq: [string, unknown][] };
+type TableResult = { data: unknown; error: unknown };
 
-function fakeAdmin(bookingResult: { data: unknown; error: unknown } = {
-  data: null,
-  error: null,
-}) {
+function fakeAdmin(
+  results: Partial<Record<string, TableResult>> = {},
+) {
   const updates: UpdateCall[] = [];
   const client = {
     from(table: string) {
+      const result = results[table] ?? { data: null, error: null };
       const call: UpdateCall = { table, values: null, eq: [] };
       const builder = {
         update(values: unknown) {
@@ -33,11 +34,11 @@ function fakeAdmin(bookingResult: { data: unknown; error: unknown } = {
           return builder;
         },
         select: () => builder,
-        single: () => Promise.resolve(bookingResult),
+        single: () => Promise.resolve(result),
         then: (
           resolve: (value: unknown) => unknown,
           reject: (reason: unknown) => unknown,
-        ) => Promise.resolve({ data: null, error: null }).then(resolve, reject),
+        ) => Promise.resolve(result).then(resolve, reject),
       };
       return builder;
     },
@@ -135,7 +136,7 @@ describe("configuration and signature checks", () => {
 
 describe("payment_intent.succeeded", () => {
   it("marks the payment and booking paid for a deposit", async () => {
-    const { client, updates } = fakeAdmin(confirmedBooking);
+    const { client, updates } = fakeAdmin({ bookings: confirmedBooking });
     vi.mocked(getSupabaseAdmin).mockReturnValue(client);
 
     const response = await POST(
@@ -173,7 +174,7 @@ describe("payment_intent.succeeded", () => {
   });
 
   it("records the full amount for a full prepayment", async () => {
-    const { client, updates } = fakeAdmin(confirmedBooking);
+    const { client, updates } = fakeAdmin({ bookings: confirmedBooking });
     vi.mocked(getSupabaseAdmin).mockReturnValue(client);
 
     await POST(
@@ -217,10 +218,9 @@ describe("payment_intent.succeeded", () => {
     expect(sendBookingConfirmationEmail).not.toHaveBeenCalled();
   });
 
-  it("skips the email when the booking update fails", async () => {
+  it("500s so Stripe retries when the booking update fails", async () => {
     const { client } = fakeAdmin({
-      data: null,
-      error: { message: "connection reset" },
+      bookings: { data: null, error: { message: "connection reset" } },
     });
     vi.mocked(getSupabaseAdmin).mockReturnValue(client);
 
@@ -228,10 +228,53 @@ describe("payment_intent.succeeded", () => {
       signedRequest(intentEvent("payment_intent.succeeded", paidIntent)),
     );
 
-    // The handler acks with 200 even when the update fails, so Stripe
-    // will not retry and the booking stays pending despite the payment.
+    expect(response.status).toBe(500);
+    expect(sendBookingConfirmationEmail).not.toHaveBeenCalled();
+  });
+
+  it("500s so Stripe retries when the payment update fails", async () => {
+    const { client } = fakeAdmin({
+      payments: { data: null, error: { message: "connection reset" } },
+    });
+    vi.mocked(getSupabaseAdmin).mockReturnValue(client);
+
+    const response = await POST(
+      signedRequest(intentEvent("payment_intent.succeeded", paidIntent)),
+    );
+
+    expect(response.status).toBe(500);
+    expect(sendBookingConfirmationEmail).not.toHaveBeenCalled();
+  });
+
+  it("acks a booking that no longer exists — retries can't fix it", async () => {
+    const { client } = fakeAdmin({
+      bookings: {
+        data: null,
+        error: { message: "no rows returned", code: "PGRST116" },
+      },
+    });
+    vi.mocked(getSupabaseAdmin).mockReturnValue(client);
+
+    const response = await POST(
+      signedRequest(intentEvent("payment_intent.succeeded", paidIntent)),
+    );
+
     expect(response.status).toBe(200);
     expect(sendBookingConfirmationEmail).not.toHaveBeenCalled();
+  });
+
+  it("acks when only the confirmation email fails", async () => {
+    const { client } = fakeAdmin({ bookings: confirmedBooking });
+    vi.mocked(getSupabaseAdmin).mockReturnValue(client);
+    vi.mocked(sendBookingConfirmationEmail).mockRejectedValue(
+      new Error("resend outage"),
+    );
+
+    const response = await POST(
+      signedRequest(intentEvent("payment_intent.succeeded", paidIntent)),
+    );
+
+    expect(response.status).toBe(200);
   });
 });
 

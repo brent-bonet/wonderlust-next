@@ -42,10 +42,16 @@ export async function POST(request: Request) {
 
     const amount = intent.amount_received / 100;
 
-    await supabase
+    // Non-2xx responses make Stripe retry with backoff, and both updates
+    // are absolute writes, so replaying the event is safe. Never ack an
+    // event whose booking we failed to confirm — the client has paid.
+    const { error: paymentError } = await supabase
       .from("payments")
       .update({ status: "succeeded" })
       .eq("stripe_payment_intent_id", intent.id);
+    if (paymentError) {
+      return Response.json({ error: paymentError.message }, { status: 500 });
+    }
 
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
@@ -61,13 +67,25 @@ export async function POST(request: Request) {
       )
       .single();
 
-    if (!bookingError && booking) {
-      const service = Array.isArray(booking.services)
-        ? booking.services[0]
-        : booking.services;
-      const stylist = Array.isArray(booking.stylists)
-        ? booking.stylists[0]
-        : booking.stylists;
+    if (bookingError || !booking) {
+      // PGRST116 = no matching row: the booking is gone, and no number
+      // of retries will bring it back. Anything else may be transient.
+      if (bookingError?.code === "PGRST116") {
+        return Response.json({ received: true });
+      }
+      return Response.json(
+        { error: bookingError?.message ?? "Booking update failed." },
+        { status: 500 },
+      );
+    }
+
+    const service = Array.isArray(booking.services)
+      ? booking.services[0]
+      : booking.services;
+    const stylist = Array.isArray(booking.stylists)
+      ? booking.stylists[0]
+      : booking.stylists;
+    try {
       await sendBookingConfirmationEmail({
         clientName: booking.client_name,
         clientEmail: booking.client_email,
@@ -78,15 +96,21 @@ export async function POST(request: Request) {
         amountPaid: amount,
         paymentType,
       });
+    } catch {
+      // The booking is confirmed; a 500 here would only make Stripe
+      // replay the event to re-attempt an email.
     }
   }
 
   if (event.type === "payment_intent.payment_failed") {
     const intent = event.data.object as Stripe.PaymentIntent;
-    await supabase
+    const { error: paymentError } = await supabase
       .from("payments")
       .update({ status: "failed" })
       .eq("stripe_payment_intent_id", intent.id);
+    if (paymentError) {
+      return Response.json({ error: paymentError.message }, { status: 500 });
+    }
     // Booking stays "pending" — the client sees a failed-payment redirect
     // and can retry from /book; nothing was ever held.
   }
