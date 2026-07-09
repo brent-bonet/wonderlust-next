@@ -85,6 +85,13 @@ create table if not exists payments (
 
 create index if not exists bookings_date_idx on bookings (appointment_date);
 create index if not exists bookings_stylist_idx on bookings (stylist_id);
+
+-- Backstop for the API's check-then-insert: two simultaneous requests can
+-- both pass the availability re-check, so the database must reject the
+-- loser. Cancelled/completed bookings don't hold the slot.
+create unique index if not exists bookings_slot_unique_idx
+  on bookings (stylist_id, appointment_date, appointment_time)
+  where status in ('pending', 'confirmed');
 create index if not exists availability_stylist_idx on availability (stylist_id);
 
 -- Row Level Security: public site reads active/public rows anonymously;

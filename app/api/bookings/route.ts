@@ -116,6 +116,13 @@ export async function POST(request: NextRequest) {
     .select("id")
     .single();
   if (bookingError || !booking) {
+    // Unique violation on the slot index: we lost a race for this slot.
+    if (bookingError?.code === "23505") {
+      return NextResponse.json(
+        { error: "That time was just taken — please pick another slot." },
+        { status: 409 },
+      );
+    }
     return NextResponse.json(
       { error: bookingError?.message ?? "Could not create booking." },
       { status: 500 },
